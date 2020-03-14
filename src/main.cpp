@@ -14,15 +14,24 @@
 #define PSC_VALUE 640
 #define ARR_VALUE 65535
 
-uint32_t counter = 0;
+int count = 0;
 
 
-extern "c" void TIM2_IRQHandler(void){
-	if(TIM2->SR & TIM_SR_UIF){
-		counter++;
+void delay(int duration){
+	count = 0;
+	while(count < duration){}
+}
 
-		TIM2->SR &= ~(TIM_SR_UIF);
-	}
+
+extern "C" void TIM3_IRQHandler(void){
+	if(TIM3->SR & TIM_SR_UIF){
+					TIM3->SR &= ~TIM_SR_UIF;
+					++count;
+
+
+
+
+				}
 
 }
 
@@ -70,24 +79,24 @@ int main(void)
 //-----------------------------------------------------------
 //---------configure timer for delay---------------------------
 	//enable timer RCC
-	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+	RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
 	//Set prescaler value
-	TIM2->PSC = PSC_VALUE;
+	TIM3->PSC = PSC_VALUE;
 	//Set auto-reload value
-	TIM2->ARR = ARR_VALUE;
-	//Enable Auto preload
-	TIM2->CR1 |= TIM_CR1_ARPE;
-	//Set direction to upcounter
-	TIM2->CR1 &= ~TIM_CR1_DIR;
-	//Set update request_source;
-	TIM2->CR1 |= TIM_CR1_URS;
+	TIM3->ARR = ARR_VALUE;
 	//generate an update
-	TIM2->EGR |= TIM_EGR_UG;
+	TIM3->EGR |= TIM_EGR_UG;
+	//Enable Auto-reload
+	TIM3->CR1 |= TIM_CR1_ARPE;
 	//Enable update interrupt
-	TIM2->DIER |= TIM_DIER_UIE;
+	TIM3->DIER |= TIM_DIER_UIE;
+	//Set update request_source;
+	TIM3->CR1 |= TIM_CR1_URS;
+	//Enable interrupt
+	TIM3->CR1 |= TIM_CR1_CEN;
 
-	NVIC_SetPriority(TIM2_IRQn,0x00);
-	NVIC_EnableIRQ(TIM2_IRQn);
+	NVIC_SetPriority(TIM3_IRQn,0x03);
+	NVIC_EnableIRQ(TIM3_IRQn);
 
 
 
@@ -107,6 +116,8 @@ int main(void)
 
 
 	while(1){
+
+
 
 	}
 }
