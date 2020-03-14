@@ -11,8 +11,20 @@
 
 #include "stm32f4xx.h"
 
-#define PSC_VALUE 12
-#define ARR_VALUE 23
+#define PSC_VALUE 640
+#define ARR_VALUE 65535
+
+uint32_t counter = 0;
+
+
+extern "c" void TIM2_IRQHandler(void){
+	if(TIM2->SR & TIM_SR_UIF){
+		counter++;
+
+		TIM2->SR &= ~(TIM_SR_UIF);
+	}
+
+}
 
 int main(void)
 {
@@ -63,6 +75,22 @@ int main(void)
 	TIM2->PSC = PSC_VALUE;
 	//Set auto-reload value
 	TIM2->ARR = ARR_VALUE;
+	//Enable Auto preload
+	TIM2->CR1 |= TIM_CR1_ARPE;
+	//Set direction to upcounter
+	TIM2->CR1 &= ~TIM_CR1_DIR;
+	//Set update request_source;
+	TIM2->CR1 |= TIM_CR1_URS;
+	//generate an update
+	TIM2->EGR |= TIM_EGR_UG;
+	//Enable update interrupt
+	TIM2->DIER |= TIM_DIER_UIE;
+
+	NVIC_SetPriority(TIM2_IRQn,0x00);
+	NVIC_EnableIRQ(TIM2_IRQn);
+
+
+
 
 
 
