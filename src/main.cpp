@@ -10,7 +10,9 @@
 
 
 #include "stm32f4xx.h"
-			
+
+#define PSC_VALUE 12
+#define ARR_VALUE 23
 
 int main(void)
 {
@@ -54,6 +56,22 @@ int main(void)
 	while(!(RCC->CFGR & RCC_CFGR_SWS_PLL )){}
 
 //-----------------------------------------------------------
+//---------configure timer for delay---------------------------
+	//enable timer RCC
+	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+	//Set prescaler value
+	TIM2->PSC = PSC_VALUE;
+	//Set auto-reload value
+	TIM2->ARR = ARR_VALUE;
+
+
+
+
+
+
+
+
+//-----------------------------------------------------------------
 	//Enable the ADC RCC
 	RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
 	//Set GPIO pin to analog mode(GPIOA PIN1)
