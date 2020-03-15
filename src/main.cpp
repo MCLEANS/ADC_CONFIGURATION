@@ -98,21 +98,18 @@ int main(void)
 	NVIC_SetPriority(TIM3_IRQn,0x03);
 	NVIC_EnableIRQ(TIM3_IRQn);
 
+//----------------------------------------------------------------
 
-
-
-
-
-
-
-
-
-
-//-----------------------------------------------------------------
 	//Enable the ADC RCC
 	RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
-	//Set GPIO pin to analog mode(GPIOA PIN1)
+	//change ADC prescaler since it should not exceed 30MHz
+	//(84MHz/4 = 21MHz)
+	ADC->CCR |= ADC_CCR_ADCPRE_0;
+	//Enable RCC for input GPIO
+	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+	//Set pin to Analog Mode
 	GPIOA->MODER |= GPIO_MODER_MODER1;
+
 
 
 	while(1){
