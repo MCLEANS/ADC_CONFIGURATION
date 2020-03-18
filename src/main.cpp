@@ -12,12 +12,12 @@
 #include "stm32f4xx.h"
 
 #define PSC_VALUE 640
-#define ARR_VALUE 65535
+#define ARR_VALUE 66
 
 int count = 0;
 
 
-void delay(int duration){
+void delay_ms(int duration){
 	count = 0;
 	while(count < duration){}
 }
@@ -27,11 +27,11 @@ extern "C" void TIM3_IRQHandler(void){
 	if(TIM3->SR & TIM_SR_UIF){
 					TIM3->SR &= ~TIM_SR_UIF;
 					++count;
+	}
 
+}
 
-
-
-				}
+extern "C" void ADC_IRQHandler(void){
 
 }
 
@@ -109,6 +109,20 @@ int main(void)
 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
 	//Set pin to Analog Mode
 	GPIOA->MODER |= GPIO_MODER_MODER1;
+
+	//Enable end of conversion Interrupt
+	ADC1->CR1 |= ADC_CR1_EOCIE;
+
+	//Set ADC Interrupt priority
+	NVIC_SetPriority(ADC_IRQn, 0x00);
+	//Enable NVIC interrupt
+	NVIC_EnableIRQ(ADC_IRQn);
+
+	//set the sampling rate
+	ADC1->SMPR2 |= ADC_SMPR2_SMP1;
+
+	//
+
 
 
 
