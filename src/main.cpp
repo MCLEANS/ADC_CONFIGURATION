@@ -15,6 +15,7 @@
 #define ARR_VALUE 66
 
 int count = 0;
+int value = 25;
 
 
 void delay_ms(int duration){
@@ -32,6 +33,12 @@ extern "C" void TIM3_IRQHandler(void){
 }
 
 extern "C" void ADC_IRQHandler(void){
+
+	if(ADC1->SR & ADC_SR_EOC){
+		ADC1->SR &= ~ADC_SR_EOC;
+		value = ADC1->DR;
+		ADC1->CR2 |= ADC_CR2_SWSTART;
+	}
 
 }
 
@@ -133,7 +140,8 @@ int main(void)
 	ADC1->CR2 |= ADC_CR2_ADON;
 	delay_ms(2);
 
-	//calibrate the ADC
+	//start first ADC conversion
+	ADC1->CR2 |= ADC_CR2_SWSTART;
 
 
 
