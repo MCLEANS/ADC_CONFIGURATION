@@ -121,7 +121,10 @@ int main(void)
 	//set the sampling rate
 	ADC1->SMPR2 |= ADC_SMPR2_SMP1;
 
-	//
+	//set the number of channels to be converted and the conversion sequence
+	//by default only one channel is selected
+	ADC1->SQR3 |= ADC_SQR3_SQ1_0;
+
 
 
 
