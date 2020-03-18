@@ -125,8 +125,16 @@ int main(void)
 	//by default only one channel is selected
 	ADC1->SQR3 |= ADC_SQR3_SQ1_0;
 
-	//enable ADC for the first time(wakes up ADC from power down mode) and set to continuous mode.
+	//enable ADC for the first time (wakes up ADC from power down mode) and set to continuous mode.
 	ADC1->CR2 |= ADC_CR2_ADON | ADC_CR2_CONT;
+	//delay tSTAB to enable the ADC power up
+	delay_ms(2);
+	//enable ADC for the second time to actually turn it on
+	ADC1->CR2 |= ADC_CR2_ADON;
+	delay_ms(2);
+
+	//calibrate the ADC
+
 
 
 
